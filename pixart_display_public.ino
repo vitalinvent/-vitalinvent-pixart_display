@@ -26,8 +26,8 @@
 // This defines the 'on' time of the display is us. The larger this number,
 // the brighter the display. If too large the ESP will crash
 uint8_t display_draw_time=10; //30-70 is usually fine
-const char* ssid = "ROSTELECOM_4D2E";
-const char* password = "fori=1to10next";
+const char* ssid = "YOU_WIFI";
+const char* password = "PASSWORD";
 
 PxMATRIX display(64,32,P_LAT, P_OE,P_A,P_B,P_C,P_D,P_E);
 //PxMATRIX display(64,32,P_LAT, P_OE,P_A,P_B,P_C);
@@ -44,10 +44,11 @@ uint16_t myMAGENTA = display.color565(255, 0, 255);
 uint16_t myBLACK = display.color565(0, 0, 0);
 uint16_t myCOLORS[8]={myRED,myGREEN,myBLUE,myWHITE,myYELLOW,myCYAN,myMAGENTA,myBLACK};
 uint8_t icon_index=0;
-#define max_pix 5
-uint16_t r_col[max_pix]={ 0 };
-uint16_t r_x[max_pix]={ 0 };
-uint16_t r_y[max_pix]={ 0 };
+int max_pix = 6;
+int timerPix = 1000;
+uint16_t r_col[100]={ 0 };
+uint16_t r_x[100]={ 0 };
+uint16_t r_y[100]={ 0 };
 uint16_t counter=0;
 boolean filled=false;
 
@@ -92,21 +93,25 @@ void setup() {
 void loop() {
   ArduinoOTA.handle();
   display.drawPixel(r_x[counter],r_y[counter],r_col[counter]);
-  if (filled){
-    if (counter+1<max_pix) {
+  //if (filled){
+    //if (counter+1<=max_pix) {
       display.drawPixel(r_x[counter+1],r_y[counter+1],0);
-    }
-  }
+    //}
+  //}
   if (counter>=max_pix){
     counter=0;
     filled=true;
+    max_pix = random(5,50);
+    display.clearDisplay();
+    timerPix=10;
   }
   r_x[counter]=random(matrix_width);
   r_y[counter]=random(matrix_height);
   r_col[counter]=random(65535);
   
-  delay(100);
+  delay(timerPix);
   counter++;
+  timerPix = random(100,3000);
 }
 
 #ifdef ESP8266
